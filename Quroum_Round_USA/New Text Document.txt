@@ -21,27 +21,59 @@
 --  FROM step1;
 
 
-    WITH Step1 AS 
+CREATE TABLE #SubSetOfRecords
+(
+[idx] INT NULL,
+[lat] DECIMAL(11,8) NULL,
+[lon] DECIMAL(11,8) NULL
+)
+
+INSERT INTO #SubSetOfRecords
+(
+    idx,
+    lat,
+    lon
+)
+
+SELECT [idx],
+       [lat],
+       [lon]
+FROM
+(
+    SELECT ROW_NUMBER() OVER (ORDER BY idx) rowNumber,
+           [idx],
+           [lat],
+           [lon]
+    FROM [dbo].[tracks_stage1]
+) AS X
+WHERE rowNumber = 1
+      OR rowNumber % 5 = 0;
+
+;
+
+  WITH Step2 AS 
   (
   SELECT
        [idx]
       ,[lat]
       ,[lon]
-  FROM [dbo].[tracks_stage1]
-  ),
-  Step2 AS
+  --FROM [dbo].[tracks_stage1]
+  FROM #SubSetOfRecords
+  )
+  ,
+  Step3 AS
   (
   SELECT 
        [idx]
       ,[lat]
       ,[lon]
-	  ,LEAD(step1.[lat],1) OVER ( ORDER BY [idx]) AS [Lat_end]
-	  ,LEAD(step1.[lon],1) OVER ( ORDER BY [idx]) AS [Lon_end]
+	  ,LEAD(step2.[lat],1) OVER ( ORDER BY [idx]) AS [Lat_end]
+	  ,LEAD(step2.[lon],1) OVER ( ORDER BY [idx]) AS [Lon_end]
 	  ,([lat] /180 )* PI() AS Lat_Start_Rad
 	  ,([lon] /180 )* PI() AS Lon_Start_Rad
-	  ,(LEAD(step1.[lat],1) OVER ( ORDER BY [idx])/180) * PI() AS [Lat_end_Rad]
-	  ,(LEAD(step1.[lon],1) OVER ( ORDER BY [idx])/180) * PI() AS [Lon_end_Rad]
-  FROM step1
+	  ,(LEAD(step2.[lat],1) OVER ( ORDER BY [idx])/180) * PI() AS [Lat_end_Rad]
+	  ,(LEAD(step2.[lon],1) OVER ( ORDER BY [idx])/180) * PI() AS [Lon_end_Rad]
+  FROM step2
   )
   SELECT 
          [idx]
@@ -53,6 +85,8 @@
 	  ,Lon_Start_Rad
 	  ,[Lat_end_Rad]
 	  ,[Lon_end_Rad]
-	  ,ACOS(SIN(Lat_Start_Rad)*SIN([Lat_end_Rad])+COS([Lat_Start_Rad])*COS([Lat_end_Rad])*COS([Lon_end_Rad]-[Lon_Start_Rad]))*6371
-	  , SUM(ACOS(SIN(Lat_Start_Rad)*SIN([Lat_end_Rad])+COS([Lat_Start_Rad])*COS([Lat_end_Rad])*COS([Lon_end_Rad]-[Lon_Start_Rad]))*6371) OVER (ORDER BY [idx]) AS Sum_total
-  FROM Step2
+	  ,ACOS(SIN(Lat_Start_Rad)*SIN([Lat_end_Rad])+COS([Lat_Start_Rad])*COS([Lat_end_Rad])*COS([Lon_end_Rad]-[Lon_Start_Rad]))*6371 AS Km_distance
+	  , SUM(ACOS(SIN(Lat_Start_Rad)*SIN([Lat_end_Rad])+COS([Lat_Start_Rad])*COS([Lat_end_Rad])*COS([Lon_end_Rad]-[Lon_Start_Rad]))*6371) OVER (ORDER BY [idx]) AS Total_Km
+  FROM Step3
+
+  DROP TABLE #SubSetOfRecords
