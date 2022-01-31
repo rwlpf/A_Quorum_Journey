@@ -1,0 +1,58 @@
+/****** Script for SelectTopNRows command from SSMS  ******/
+--;
+--  WITH Step1 AS 
+--  (
+--  SELECT TOP (100) 
+--       [idx]
+--      ,[lat]
+--      ,[lon]
+--  FROM [dbo].[tracks_stage1]
+--  )
+--  SELECT 
+--       [idx]
+--      ,[lat]
+--      ,[lon]
+--	  ,LEAD(step1.[lat],1) OVER ( ORDER BY [idx]) AS [Lat_end]
+--	  ,LEAD(step1.[lon],1) OVER ( ORDER BY [idx]) AS [Lon_end]
+--	  ,([lat] /180 )* PI() AS Lat_Start_Rad
+--	  ,([lon] /180 )* PI() AS Lon_Start_Rad
+--	  ,(LEAD(step1.[lat],1) OVER ( ORDER BY [idx])/180) * PI() AS [Lat_end_Rad]
+--	  ,(LEAD(step1.[lon],1) OVER ( ORDER BY [idx])/180) * PI() AS [Lon_end_Rad]
+--  FROM step1;
+
+
+WITH Step1
+AS (SELECT [idx],
+           [lat],
+           [lon]
+    FROM [dbo].[tracks_stage1]
+   ),
+     Step2
+AS (SELECT [idx],
+           [lat],
+           [lon],
+           LEAD(step1.[lat], 1) OVER (ORDER BY [idx]) AS [Lat_end],
+           LEAD(step1.[lon], 1) OVER (ORDER BY [idx]) AS [Lon_end],
+           ([lat] / 180) * PI() AS Lat_Start_Rad,
+           ([lon] / 180) * PI() AS Lon_Start_Rad,
+           (LEAD(step1.[lat], 1) OVER (ORDER BY [idx]) / 180) * PI() AS [Lat_end_Rad],
+           (LEAD(step1.[lon], 1) OVER (ORDER BY [idx]) / 180) * PI() AS [Lon_end_Rad]
+    FROM step1
+   )
+SELECT [idx],
+       [lat],
+       [lon],
+       [Lat_end],
+       [Lon_end],
+       Lat_Start_Rad,
+       Lon_Start_Rad,
+       [Lat_end_Rad],
+       [Lon_end_Rad],
+       ACOS(SIN(Lat_Start_Rad) * SIN([Lat_end_Rad]) + COS([Lat_Start_Rad]) * COS([Lat_end_Rad])
+            * COS([Lon_end_Rad] - [Lon_Start_Rad])
+           ) * 6371,
+       SUM(ACOS(SIN(Lat_Start_Rad) * SIN([Lat_end_Rad]) + COS([Lat_Start_Rad]) * COS([Lat_end_Rad])
+                * COS([Lon_end_Rad] - [Lon_Start_Rad])
+               ) * 6371
+          ) OVER (ORDER BY [idx]) AS Sum_total
+FROM Step
