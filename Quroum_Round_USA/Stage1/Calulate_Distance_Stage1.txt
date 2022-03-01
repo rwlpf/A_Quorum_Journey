@@ -15042,6 +15042,10 @@ FROM
 WHERE rowNumber = 1
       OR rowNumber % 5 = 0;
 
+/* delete all the records before repopulating the table*/
+
+TRUNCATE TABLE [dbo].[Journey_USA_Stage1]
+
 ;
 WITH Step2
 AS (SELECT [idx],
