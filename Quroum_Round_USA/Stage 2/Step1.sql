@@ -1,12 +1,9 @@
 IF EXISTS(SELECT *
-          FROM   [dbo].[Journey_USA_Stage1_Step1])
-  DROP TABLE [dbo].[Journey_USA_Stage1_Step1];
-
-DROP TABLE IF EXISTS #Tracks
+          FROM   [dbo].[Journey_USA_Stage2_Step1])
+  DROP TABLE [dbo].[Journey_USA_Stage2_Step1];
 
 DROP TABLE IF EXISTS #SubSetOfRecords;
 DROP TABLE IF EXISTS #Tracks;
-
 
 CREATE TABLE #Tracks
 (
@@ -15027,12 +15024,12 @@ CREATE TABLE #SubSetOfRecords
 )
 
 IF EXISTS(SELECT *
-          FROM   [dbo].[Journey_USA_Stage1_Step1])
-  DROP TABLE [dbo].[Journey_USA_Stage1_Step1];
+          FROM   [dbo].[Journey_USA_Stage2_Step1])
+  DROP TABLE [dbo].[Journey_USA_Stage2_Step1];
 
 /*==================================================*/
   
-CREATE TABLE [dbo].[Journey_USA_Stage1_Step1](
+CREATE TABLE [dbo].[Journey_USA_Stage2_Step1](
 	[idx] [INT] NULL,
 	[lat] [DECIMAL](11, 8) NULL,
 	[lon] [DECIMAL](11, 8) NULL,
@@ -15069,7 +15066,7 @@ SELECT [idx],
        [lat],
        [lon],
        [ele]
-INTO Journey_USA_Stage1_Step1
+INTO Journey_USA_Stage2_Step1
 FROM #SubSetOfRecords
 
 DROP TABLE #SubSetOfRecords;

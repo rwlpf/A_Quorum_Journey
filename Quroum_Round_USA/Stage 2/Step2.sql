@@ -6,7 +6,7 @@ Insert the crossings from one state to another into the table
 USE [aQuorumJourney]
 GO
 
-INSERT INTO [dbo].[Journey_USA_Stage1_Step1]
+INSERT INTO [dbo].[Journey_USA_Stage2_Step1]
            ([idx]
            ,[lat]
            ,[lon]
