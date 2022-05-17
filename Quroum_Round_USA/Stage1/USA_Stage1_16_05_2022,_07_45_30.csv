@@ -1,0 +1,3 @@
+Requested on,Dataflow name,Dataflow refresh status,Table name,Partition name,Refresh status,Start time,End time,Duration,Rows processed,Bytes processed (KB),Max commit (KB),Processor Time,Wait time,Compute engine,Error,
+2022-05-16 07:45:30,USA_Stage1,Failed,Journey_USA_Stage1,NA,Completed,2022-05-16 07:45:30,2022-05-16 07:46:01,00:00:30.3600,NA,NA,NA,NA,NA,NA,NA
+2022-05-16 07:46:01,USA_Stage1,Failed,StravaData,NA,Failed,2022-05-16 07:46:01,2022-05-16 07:46:31,00:00:30.4560,NA,NA,NA,NA,NA,NA,Error: DataSource.Error: Microsoft SQL: Error converting data type nvarchar to numeric. Request ID: 4202a27a-7f0c-b1c6-a388-b1cb4131f941 Activity ID: 299e2c51-1a5a-4073-ab48-9e0b061933d4
