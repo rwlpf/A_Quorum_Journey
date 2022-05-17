@@ -3,9 +3,27 @@ Check that updated the table names
 The table name [Journey_USA_Stage2] should be updated
 */
 
-IF EXISTS(SELECT *
-          FROM   [dbo].[Journey_USA_Stage2])
-  TRUNCATE TABLE [dbo].[Journey_USA_Stage2];
+-- attempt to run DROP TABLE only if it exists 
+DROP TABLE IF EXISTS[dbo].[Journey_USA_Stage2]
+GO
+
+CREATE TABLE [dbo].[Journey_USA_Stage2](
+	[Index] [SMALLINT] NOT NULL,
+	[Lat_Start] [DECIMAL](10, 6) NULL,
+	[Lon_Start] [DECIMAL](10, 6) NULL,
+	[Elevation] [NVARCHAR](50) NULL,
+	[Lat_End] [DECIMAL](10, 6) NULL,
+	[Lon_End] [DECIMAL](10, 6) NULL,
+	[Lat_Start_Rad] [NVARCHAR](50) NULL,
+	[Lon_Start_Rad] [NVARCHAR](50) NULL,
+	[Lat_End_Rad] [NVARCHAR](50) NULL,
+	[Lon_End_Rad] [NVARCHAR](50) NULL,
+	[Distance_Km] [DECIMAL](12, 6) NULL,
+	[RT_Km] [DECIMAL](12, 6) NULL,
+	[PointSize] [TINYINT] NULL,
+	[Cumulative_KM] [DECIMAL](12, 6) NULL
+) ON [PRIMARY]
+GO
 
 ;
 WITH Step2
@@ -14,7 +32,7 @@ AS (SELECT TOP 100 PERCENT
            [lat],
            [lon],
            [ele]
-    FROM [dbo].[Journey_USA_Stage1_Step1]
+    FROM [dbo].[Journey_USA_Stage2_Step1]
 	ORDER BY [idx]
    ),
      Step3
