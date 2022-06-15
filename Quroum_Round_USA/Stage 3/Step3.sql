@@ -1,13 +1,14 @@
 /*
 Check that updated the table names 
-The table name [Journey_USA_Stage2] should be updated
+The table name [Journey_USA_Stage3] should be updated
+The table name [dbo].[Journey_USA_Stage3_Step1] should be updated
 */
 
 -- attempt to run DROP TABLE only if it exists 
-DROP TABLE IF EXISTS[dbo].[Journey_USA_Stage2]
+DROP TABLE IF EXISTS [dbo].[Journey_USA_Stage3]
 GO
 
-CREATE TABLE [dbo].[Journey_USA_Stage2](
+CREATE TABLE [dbo].[Journey_USA_Stage3](
 	[Index] [SMALLINT] NOT NULL,
 	[Lat_Start] [DECIMAL](10, 6) NULL,
 	[Lon_Start] [DECIMAL](10, 6) NULL,
@@ -32,7 +33,7 @@ AS (SELECT TOP 100 PERCENT
            [lat],
            [lon],
            [ele]
-    FROM [dbo].[Journey_USA_Stage2_Step1]
+    FROM [dbo].[Journey_USA_Stage3_Step1]
 	ORDER BY [idx]
    ),
      Step3
@@ -48,7 +49,7 @@ AS (SELECT [idx],
            (LEAD(step2.[lon], 1) OVER (ORDER BY [idx]) / 180) * PI() AS [Lon_end_Rad]
     FROM step2
    )
-INSERT INTO [dbo].[Journey_USA_Stage2]
+INSERT INTO [dbo].[Journey_USA_Stage3]
 (
     [Index],
     [Lat_Start],
@@ -87,4 +88,4 @@ WHERE [Lat_end] IS NOT NULL
 
 /*==================================================================================================*/
 
-SELECT * FROM [dbo].[Journey_USA_Stage2]
+SELECT * FROM [dbo].[Journey_USA_Stage3]
